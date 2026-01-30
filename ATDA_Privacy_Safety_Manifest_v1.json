@@ -1,0 +1,34 @@
+# ATDA Path B — Fortress Edition (Turnstile/Metro)
+
+ATDA Path B is a privacy‑preserving traffic aggregation kernel for turnstile/metro/stadium deployments with formal ε‑differential privacy guarantees at the PASSAGE level (one passage per epoch). It is designed for high‑throughput environments under strict GDPR/CCPA oversight and external audit.
+
+Key properties:
+
+- **Subject / adjacency:** PASSAGE‑level within a single epoch; adjacent datasets differ by exactly one passage (add/remove). No user‑level (cross‑epoch) DP claim is made.
+- **Noise mechanism:** two‑sided geometric (discrete Laplace) for integer count queries, with parameter \(p = 1 - \exp(-\varepsilon / \Delta)\) and \(\Delta_1(f) = 1\). The sampler is integer‑only at runtime and never truncates the distribution internally.
+- **DP‑clean k‑gate:** gating based on noisy sums \(\tilde T[g] = \sum_s Y[g,s]\) (unclamped), with a safety margin, and a non‑negativity remap `max(0, Y)` applied only as post‑processing to published counts.
+- **Robustness constraints:** public governance‑fixed limits (epoch_total_max, bucket_max, dedup capacity) defining the domain where the ε‑DP claim holds.
+- **Exact dedup:** in Fortress mode only exact fixed‑capacity deduplication (EXACT_SET) is allowed; Bloom‑based deduplication is explicitly disallowed for strict ε‑DP and moved to a separate (ε,δ) annex.
+
+## Repository layout
+
+Recommended structure (filenames may differ, but the meaning should match):
+
+```text
+ATDA-WhitePaper/
+  README.md
+
+  src/
+    atda_v4xx_turnstile_fortress_reference.py   # Python reference kernel (Fortress profile, PASSAGE-level ε-DP)
+
+  specs/
+    ATDA_PathB_VariantA_Main_Spec_v1_1_TestMatrix_v2.pdf
+    ATDA_PathB_VariantA_Appendix_Skeleton_v434_normative_api.pdf
+
+  manifest/
+    ATDA_Privacy_Safety_Manifest_v1.json
+    validate_manifest.py
+
+  ci/
+    ci.yml
+
