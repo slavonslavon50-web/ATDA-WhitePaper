@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 286" role="img" aria-labelledby="title desc">
+  <title id="title">ATDA Path B demonstration: 49 withheld, 50 eligible at next checkpoint</title>
+  <desc id="desc">First checkpoint at 15 minutes with 49 synthetic interactions: no aggregate release, window extends to 30 minutes. Fiftieth arrives at minute 16 but does not publish until checkpoint at minute 30, when coarse randomized aggregate output becomes eligible. Research reference only.</desc>
+  <rect width="960" height="286" rx="16" fill="#101d2d"/>
+  <text x="32" y="39" fill="#79d6c3" font-family="Arial,sans-serif" font-weight="bold" font-size="14" letter-spacing="2">PATH B / PUBLIC SYNTHETIC DEMO</text>
+  <text x="32" y="76" fill="#ffffff" font-family="Arial,sans-serif" font-size="27" font-weight="bold">Release gate: 49 events vs 50 events</text>
+  <rect x="30" y="100" width="422" height="134" rx="12" fill="#1c2a3c" stroke="#f2bd64" stroke-width="2"/>
+  <rect x="508" y="100" width="422" height="134" rx="12" fill="#1c2a3c" stroke="#56d6b0" stroke-width="2"/>
+  <text x="50" y="138" fill="#ffe0a6" font-family="Arial,sans-serif" font-size="28" font-weight="bold">49 events</text>
+  <text x="50" y="163" fill="#dce6f0" font-family="Arial,sans-serif" font-size="15">15-min checkpoint</text>
+  <text x="50" y="193" fill="#ffe0a6" font-family="Arial,sans-serif" font-size="19" font-weight="bold">NO AGGREGATE RELEASE</text>
+  <text x="50" y="216" fill="#becbdb" font-family="Arial,sans-serif" font-size="14">Window extends to 30 min</text>
+  <path d="M463 168h34m-11 -9l11 9-11 9" fill="none" stroke="#9cb1c9" stroke-width="3" stroke-linejoin="round"/>
+  <text x="528" y="138" fill="#a2ffe1" font-family="Arial,sans-serif" font-size="28" font-weight="bold">50 events</text>
+  <text x="528" y="163" fill="#dce6f0" font-family="Arial,sans-serif" font-size="15">50th arrives at 16 min; checkpoint at 30 min</text>
+  <text x="528" y="193" fill="#a2ffe1" font-family="Arial,sans-serif" font-size="19" font-weight="bold">AGGREGATE-ONLY ELIGIBLE</text>
+  <text x="528" y="216" fill="#becbdb" font-family="Arial,sans-serif" font-size="14">Coarse randomized counts, no raw events</text>
+  <text x="32" y="266" fill="#a6b9ca" font-family="Arial,sans-serif" font-size="13">Distinct validated interactions are NOT distinct people. Software reference, not hardware or GDPR certification.</text>
+</svg>

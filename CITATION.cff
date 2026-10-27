@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you discuss ATDA, cite this research reference and distinguish it from the 2025 architectural white paper."
+title: "ATDA: Privacy-Preserving Distributed Trace Detection — Research Reference"
+type: software
+authors:
+  - family-names: Panov
+    given-names: V.
+abstract: >-
+  Publicly accessible, reconstructed research reference for a dual-path
+  privacy-preserving chemical trace sensing architecture. Includes a
+  synthetic-data aggregation demonstrator, privacy limitations, and
+  proposed hardware and post-quantum migration plans. Not certified or
+  field-deployable.
+version: 1.2.0
+date-released: '2026-10-27'
+repository-code: 'https://github.com/slavonslavon50-web/ATDA-WhitePaper'
+keywords:
+  - critical infrastructure
+  - privacy engineering
+  - chemical sensing
+  - differential privacy
+  - embedded security
