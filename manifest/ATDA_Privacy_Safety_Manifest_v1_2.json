@@ -1,0 +1,64 @@
+{
+  "manifest_version": "1.2.0",
+  "release_date_utc": "2026-10-27",
+  "project": "ATDA - Anonymous Trace-Detection Analytics",
+  "status": "PUBLIC_REFERENCE_NOT_PRODUCTION_CERTIFIED",
+  "provenance": {
+    "historical_repository": "slavonslavon50-web/ATDA-WhitePaper",
+    "historical_commit_sha": "a754b3fe1c2bb4dcc132febb3f1e1e35059a99f1",
+    "architectural_whitepaper_date": "2025-12-05",
+    "reconstructed_reference_implementation": true,
+    "reconstruction_is_not_original_2025_code": true
+  },
+  "data_paths": {
+    "A": {
+      "scope": ["EXPLOSIVES", "CBRN"],
+      "high_confidence_only": true,
+      "interference_cleaners_outcome": "MAINTENANCE_ONLY",
+      "isolated_crypto_key_domain": true,
+      "runtime_implemented_in_this_repository": false
+    },
+    "B": {
+      "purpose": "AGGREGATE_STATISTICAL_ANALYTICS_ONLY",
+      "hardware_strip_pii_before_buffer": true,
+      "hardware_strip_pii_verified": false,
+      "interaction_not_person": true,
+      "k_min": 50,
+      "dynamic_window_minutes": [15, 30, 60, 120, 240, 480, 960, 1440],
+      "max_window_minutes": 1440,
+      "exact_dedup_only": true,
+      "persistent_identity_tokens": false,
+      "fixed_categories": ["NARCOTICS", "BIOHAZARD", "OTHER"],
+      "cross_epoch_tracking": false,
+      "max_interactions_per_epoch": 10000,
+      "no_release_when_true_count_under_k": true,
+      "dp_query_mechanism": "TWO_SIDED_GEOMETRIC",
+      "noise_q_numerator": 1,
+      "noise_q_denominator": 2,
+      "ideal_fixed_query_epsilon": 0.6931471805599453,
+      "l1_vector_sensitivity": 1,
+      "end_to_end_pure_dp_claim": false,
+      "person_level_dp_claim": false,
+      "gdpr_anonymisation_certified": false,
+      "no_enforcement_use": true,
+      "reference_kernel": "src/atda_pathb_fortress.py"
+    }
+  },
+  "post_quantum_migration": {
+    "transition_design_only": true,
+    "target_key_establishment": "ML-KEM-768 / TLS hybrid RFC 10024",
+    "target_signature": "ML-DSA-65",
+    "nist_fips": [203, 204, 205],
+    "nist_transition_reference": "NIST IR 8547 (verify final publication record)",
+    "fips_140_3_module_validation_confirmed": false,
+    "tpm_pqc_attestation_available": "NOT_VERIFIED"
+  },
+  "assurance": {
+    "readiness": "RESEARCH_REFERENCE_ONLY",
+    "sensor_accuracy_field_verified": false,
+    "privacy_impact_assessment_complete": false,
+    "data_protection_officer_approval": false,
+    "third_party_security_audit_complete": false,
+    "production_authorisation": false
+  }
+}

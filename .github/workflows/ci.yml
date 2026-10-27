@@ -1,0 +1,24 @@
+name: reference-assurance
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  reference-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2 pinned
+      - name: Python and JSON structure
+        run: |
+          python3 --version
+          python3 -m compileall -q src manifest
+          python3 -m json.tool manifest/ATDA_Privacy_Safety_Manifest_v1_2.json > /dev/null
+      - name: Test reference kernel and manifest
+        run: python3 -m unittest discover -s tests -v
+      - name: Detect accidental private keys or credentials by filename
+        run: |
+          if find . -type f \( -name '*.pem' -o -name '*.p12' -o -name '*.key' -o -name '.env' \) | grep .; then
+            echo 'Potential secret material in repository' >&2; exit 1
+          fi

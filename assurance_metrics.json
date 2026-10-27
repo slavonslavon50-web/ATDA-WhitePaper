@@ -1,0 +1,18 @@
+{
+  "date_utc": "2026-10-27",
+  "release": "v1.2.0 reconstructed reference",
+  "hardware_verified": false,
+  "end_to_end_pure_dp": false,
+  "fixed_query_epsilon": 0.6931471805599453,
+  "fixed_query_variance_exact": 4.0,
+  "noise_simulation_seed_test_only": 1701,
+  "noise_samples": 30000,
+  "noise_sample_mean": -0.0002,
+  "noise_sample_variance": 4.098933293333333,
+  "noise_sample_zero_rate": 0.331,
+  "tco_eur_7year_agility": 360000,
+  "tco_eur_7year_replacement_1000": 860000,
+  "tco_breakeven_device_count": 166.66666666666666,
+  "source_sha256": "212c0b05ab9fadcf126252ebb0ce09413810c30d12951251ab094edd46ae74e2",
+  "manifest_sha256": "7c3c9441cb774dd0fe61ad60bf5f9650d5ca697327ecdc58ef6f80c9879b4545"
+}
