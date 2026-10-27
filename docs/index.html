@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>ATDA | 49 to 50 — Privacy Gate Walkthrough</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, -apple-system, Segoe UI, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #ecf1ff; background: #0c1423; line-height: 1.6; }
+    main { width: min(860px, calc(100% - 36px)); margin: 48px auto 64px; }
+    .eyebrow { color: #7de4d3; font-size: .77rem; font-weight: 700; letter-spacing: .15em; }
+    h1 { font-size: clamp(1.9rem, 5vw, 3.2rem); margin: 12px 0; line-height: 1.12; }
+    .sub { max-width: 680px; color: #b8c6db; }
+    .panel { margin-top: 28px; padding: clamp(18px, 3vw, 30px); border: 1px solid #33455f; border-radius: 18px; background: #152237; }
+    .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .stat { min-width: 0; background: #0f1b2c; border: 1px solid #34465d; border-radius: 13px; padding: 16px; }
+    .stat .label { display: block; color: #aebfd3; font-size: .82rem; }
+    .stat .value { display: block; font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 800; margin-top: 5px; }
+    #decision { border-left: 4px solid #f1bd68; padding-left: 16px; }
+    #decision.yes { border-color: #5bdfbb; }
+    #state-heading { font-size: 1.4rem; margin-top: 22px; }
+    .flag { display: inline-block; padding: 3px 11px; border-radius: 20px; background: #463a25; color: #ffe0a5; font-weight: 750; font-size: .83rem; }
+    .flag.yes { color: #a2ffdd; background: #1a443d; }
+    .buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 24px; }
+    button { cursor: pointer; border: 0; border-radius: 11px; padding: 12px 18px; font: inherit; font-weight: 750; }
+    button.primary { background: #5bdfbb; color: #0b1b22; }
+    button.secondary { background: #2e4059; color: white; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #f1bd68; outline-offset: 3px; }
+    .note { color: #b8c6db; font-size: .9rem; }
+    a { color: #96dcff; }
+    .warning { margin-top: 24px; padding: 18px 20px; border-radius: 14px; background: #17273c; border: 1px solid #40526c; font-size: .89rem; }
+    code { color: #9de7d8; }
+    @media (max-width: 510px) { main { margin-top: 26px; } .stats { grid-template-columns: 1fr; } .stat { padding: 12px 15px; } }
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">ATDA / PATH B / SYNTHETIC WALKTHROUGH</div>
+  <h1>49 events: hold.<br>50 events: eligible.</h1>
+  <p class="sub">A privacy-first architecture for statistical chemical trace sensing. This interactive storyboard demonstrates the <strong>release decision</strong>; it does not process people, detect chemicals or transmit anything.</p>
+  <section class="panel" aria-label="Interactive release state">
+    <div class="stats" role="group" aria-label="Demonstration counters">
+      <div class="stat"><span class="label">Local interaction events</span><span class="value" id="count">49</span></div>
+      <div class="stat"><span class="label">Simulated elapsed time</span><span class="value" id="time">00:01</span></div>
+      <div class="stat"><span class="label">Active window</span><span class="value" id="window">15 min</span></div>
+    </div>
+    <div id="state" aria-live="polite" aria-atomic="true">
+      <h2 id="state-heading">49 synthetic interactions buffered</h2>
+      <div id="decision"><span class="flag" id="flag">NO AGGREGATE RELEASE</span>
+        <p id="explanation">Nothing is published. The system has not reached its first checkpoint.</p>
+      </div>
+    </div>
+    <div class="buttons">
+      <button type="button" class="primary" id="next">Next step: checkpoint at 15 min</button>
+      <button type="button" class="secondary" id="reset">Restart</button>
+    </div>
+    <p class="note">Step <span id="position">1</span> / 4 · No network requests, trackers, cookies or external scripts.</p>
+  </section>
+  <div class="warning">
+    <strong>What this demonstrates — and what it doesn't.</strong>
+    The gate is measured in distinct validated <em>interaction events</em>, not distinct people. At 50, output is permitted only when the scheduled aggregation window matures. A real deployment would publish <em>randomized coarse counts</em>, not raw events. This storyboard is an illustration; the <a href="https://github.com/slavonslavon50-web/ATDA-WhitePaper/blob/main/demo/demo_49_to_50.py">Python demo executes the real research kernel</a> and has regression tests. The system has <strong>no proven hardware PII barrier, no full-protocol pure ε-DP guarantee, and no certification</strong>.
+  </div>
+  <p class="note">Original concept: V. Panov (2025). Research reference and demo: October 2026. <a href="https://github.com/slavonslavon50-web/ATDA-WhitePaper">GitHub project</a> · <a href="https://github.com/slavonslavon50-web/ATDA-WhitePaper/blob/main/docs/PRIVACY_PROOF.md">Privacy limitations</a>.</p>
+</main>
+<script>
+  // UI-only storyboard. The Python source in demo/ is the executable reference.
+  const states = [
+    { count: "49", time: "00:01", window: "15 min", heading: "49 synthetic interactions buffered", allowed: false, text: "No output before the scheduled first checkpoint.", next: "Checkpoint at 15 min" },
+    { count: "49", time: "00:15", window: "30 min", heading: "49 is below the hard threshold", allowed: false, text: "No aggregate published. The 15-minute checkpoint extends the window to 30 minutes.", next: "Add the 50th interaction" },
+    { count: "50", time: "00:16", window: "30 min", heading: "50 accepted, but not yet due", allowed: false, text: "Reaching 50 does not transmit immediately. This window must still reach its next checkpoint.", next: "Checkpoint at 30 min" },
+    { count: "50", time: "00:30", window: "30 min", heading: "Aggregate release is now eligible", allowed: true, text: "Only the coarse window, zone and randomized category-count schema are eligible for output. No per-interaction records.", next: "Replay walkthrough" },
+  ];
+  let index = 0;
+  const get = id => document.getElementById(id);
+  function render() {
+    const s = states[index];
+    get("count").textContent = s.count;
+    get("time").textContent = s.time;
+    get("window").textContent = s.window;
+    get("state-heading").textContent = s.heading;
+    get("explanation").textContent = s.text;
+    get("flag").textContent = s.allowed ? "AGGREGATE-ONLY RELEASE ELIGIBLE" : "NO AGGREGATE RELEASE";
+    get("flag").classList.toggle("yes", s.allowed);
+    get("decision").classList.toggle("yes", s.allowed);
+    get("next").textContent = "Next step: " + s.next;
+    get("position").textContent = index + 1;
+  }
+  get("next").addEventListener("click", () => { index = (index + 1) % states.length; render(); });
+  get("reset").addEventListener("click", () => { index = 0; render(); });
+  render();
+</script>
+</body>
+</html>
