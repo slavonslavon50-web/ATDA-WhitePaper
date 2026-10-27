@@ -5,7 +5,7 @@
 ATDA (*Anonymous Trace-Detection Analytics*) is a **public research architecture** by V. Panov for separating high-consequence safety alerts from background chemical-trace statistics. It proposes physically independent payment and sensor trust domains, constrained data schemas, an adaptive local **k >= 50 interaction-event** release gate, and a long-term post-quantum security migration plan.
 
 [![ATDA reference tests](https://github.com/slavonslavon50-web/ATDA-WhitePaper/actions/workflows/ci.yml/badge.svg)](https://github.com/slavonslavon50-web/ATDA-WhitePaper/actions/workflows/ci.yml)
-[Read the specification](specs/ATDA_Technical_Spec_v1_2.md) · [Inspect the privacy analysis](docs/PRIVACY_PROOF.md) · [Review hardware proposal](hardware/HW01_ARCHITECTURE.md) · [Contribute technical feedback](CONTRIBUTING.md)
+[**Open the live interactive demo**](https://slavonslavon50-web.github.io/ATDA-WhitePaper/) · [Read the specification](specs/ATDA_Technical_Spec_v1_2.md) · [Inspect the privacy analysis](docs/PRIVACY_PROOF.md) · [Review hardware proposal](hardware/HW01_ARCHITECTURE.md) · [Contribute technical feedback](CONTRIBUTING.md)
 
 > **Maturity:** a reconstructed, unit-tested **synthetic-data research reference**, **not a deployed chemical detector**. No hardware PII isolation, sensor performance, end-to-end anonymisation, FIPS validation or industrial certification is claimed.
 
@@ -28,7 +28,7 @@ python3 demo/demo_49_to_50.py
 Export schema: zone, window_start_utc_min, window_minutes, noisy_counts, policy_version
 ```
 
-The demo invokes [`FortressBuffer`](src/atda_pathb_fortress.py), not an unrelated mock implementation. Randomized numerical outputs vary; the release decision is deterministic. The [interactive browser storyboard](docs/index.html) is an explanatory **offline HTML file**; GitHub shows its source until GitHub Pages is enabled. Read the [demo walkthrough](demo/README.md) for exact limits and reproducible steps.
+The demo invokes [`FortressBuffer`](src/atda_pathb_fortress.py), not an unrelated mock implementation. Randomized numerical outputs vary; the release decision is deterministic. The [interactive walkthrough is now published on GitHub Pages](https://slavonslavon50-web.github.io/ATDA-WhitePaper/); its [HTML source](docs/index.html) can also be inspected or opened offline. Read the [demo walkthrough](demo/README.md) for exact limits and reproducible steps.
 
 **Critical distinction:** the threshold counts *interactions, not unique individuals*. The publication/no-publication boundary itself leaks threshold information and is **not end-to-end pure epsilon-differential privacy**. See [the mathematical assessment](docs/PRIVACY_PROOF.md). In a real system, hardware removal of payment PII must be demonstrated *before buffering*; these software tests do not verify it.
 
@@ -65,6 +65,18 @@ python3 manifest/validate_manifest.py
 ```
 
 The same tests run in [GitHub Actions](https://github.com/slavonslavon50-web/ATDA-WhitePaper/actions/workflows/ci.yml). Passing software tests **does not** prove PII isolation, legality, cryptographic certification, or physical detectability of chemicals.
+
+## Who should review ATDA?
+
+ATDA is seeking **independent technical criticism**, not endorsements or promotional partnerships. These are suggested audiences, **not organisations affiliated with or reviewing the project**.
+
+| Audience | Relevant expertise | A useful first review |
+|---|---|---|
+| **Universities and research groups** — e.g. researchers at Trinity College Dublin or University College Dublin | Privacy engineering, formal methods, embedded security, differential privacy | Challenge the hard k=50 privacy limits, side-channel assumptions and hardware trust boundaries |
+| **Chemical-sensor and embedded-hardware manufacturers** | Sensor electronics, secure MCUs, isolation, tamper-resistance and environmental interference | Assess whether the proposed [HW-01 isolated sensor node](hardware/HW01_ARCHITECTURE.md) can be built, electrically verified and tested with synthetic signals |
+| **Critical-infrastructure security and standards specialists** — including those familiar with NIST, ENISA and IEC 62443 | Threat modelling, procurement assurance, regulations, zero trust and cryptographic migration | Check control mappings and the [PQC roadmap](docs/PQC_MIGRATION.md) against real procurement and operational constraints |
+
+**How to help:** [Open a technical feedback issue](https://github.com/slavonslavon50-web/ATDA-WhitePaper/issues/new) citing a specific assumption, a failing test or a proposed measurable acceptance criterion. See [CONTRIBUTING.md](CONTRIBUTING.md) first. Do not include any real payment, personal or sensitive operational data.
 
 ## Research questions worth challenging
 

@@ -33,6 +33,21 @@
     .warning { margin-top: 24px; padding: 18px 20px; border-radius: 14px; background: #17273c; border: 1px solid #40526c; font-size: .89rem; }
     code { color: #9de7d8; }
     @media (max-width: 510px) { main { margin-top: 26px; } .stats { grid-template-columns: 1fr; } .stat { padding: 12px 15px; } }
+
+    .audience-section { margin-top: 34px; }
+    .audience-section h2 { font-size: clamp(1.35rem, 3vw, 1.85rem); margin: 0 0 6px; }
+    .audience-section > p { color: #b8c6db; }
+    .audience-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-top: 18px; }
+    .audience-card { min-width: 0; border: 1px solid #33455f; background: #152237; border-radius: 14px; padding: 19px; }
+    .audience-card .audience-number { color: #7de4d3; font-weight: 800; font-size: .82rem; letter-spacing: .14em; }
+    .audience-card h3 { margin: 8px 0; font-size: 1.08rem; line-height: 1.35; }
+    .audience-card p { color: #b8c6db; font-size: .88rem; line-height: 1.55; }
+    .audience-card strong { color: #ecf1ff; }
+    .review-actions { display:flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+    .review-actions a { display: inline-block; border-radius: 10px; padding: 10px 15px; border: 1px solid #55738c; text-decoration: none; font-weight: 700; }
+    .review-actions a.primary-link { background: #5bdfbb; color: #0b1b22; border-color: #5bdfbb; }
+    .research-disclaimer { font-size: .8rem; color: #aebfd3; margin-top: 16px; }
+    @media (max-width: 740px) { .audience-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -62,6 +77,39 @@
     <strong>What this demonstrates — and what it doesn't.</strong>
     The gate is measured in distinct validated <em>interaction events</em>, not distinct people. At 50, output is permitted only when the scheduled aggregation window matures. A real deployment would publish <em>randomized coarse counts</em>, not raw events. This storyboard is an illustration; the <a href="https://github.com/slavonslavon50-web/ATDA-WhitePaper/blob/main/demo/demo_49_to_50.py">Python demo executes the real research kernel</a> and has regression tests. The system has <strong>no proven hardware PII barrier, no full-protocol pure ε-DP guarantee, and no certification</strong>.
   </div>
+
+  <section class="audience-section" aria-labelledby="research-review-title">
+    <h2 id="research-review-title">Who should review ATDA?</h2>
+    <p>Independent technical feedback is more valuable at this stage than promotional attention. Three research communities can help test whether the proposed safeguards are genuinely workable.</p>
+    <div class="audience-grid">
+      <article class="audience-card">
+        <span class="audience-number" aria-hidden="true">01 / RESEARCH</span>
+        <h3>Universities and researchers</h3>
+        <p>Privacy engineering, differential privacy, formal verification and secure embedded systems.</p>
+        <p><strong>Review question:</strong> Where do the k=50 gate, linkage risk and hardware-isolation claims fail under adversarial scrutiny?</p>
+        <p>Examples of potential research audiences include groups at Trinity College Dublin and University College Dublin.</p>
+      </article>
+      <article class="audience-card">
+        <span class="audience-number" aria-hidden="true">02 / HARDWARE</span>
+        <h3>Sensor and equipment developers</h3>
+        <p>Chemical sensing, secure microcontrollers, electrical isolation, diagnostics and manufacturing assurance.</p>
+        <p><strong>Review question:</strong> Can the proposed HW-01 PII boundary be built and independently measured on an isolated laboratory test board?</p>
+      </article>
+      <article class="audience-card">
+        <span class="audience-number" aria-hidden="true">03 / ASSURANCE</span>
+        <h3>Infrastructure security specialists</h3>
+        <p>Critical-infrastructure threat models, procurement controls, IEC 62443, NIST-aligned engineering and PQC migration.</p>
+        <p><strong>Review question:</strong> Which design assumptions or missing assurance evidence prevent deployment?</p>
+        <p>Reference communities include specialists familiar with NIST and ENISA guidance.</p>
+      </article>
+    </div>
+    <div class="review-actions">
+      <a class="primary-link" href="https://github.com/slavonslavon50-web/ATDA-WhitePaper/issues/new">Submit a technical review</a>
+      <a href="https://github.com/slavonslavon50-web/ATDA-WhitePaper/blob/main/CONTRIBUTING.md">How to contribute</a>
+      <a href="https://github.com/slavonslavon50-web/ATDA-WhitePaper/blob/main/hardware/HW01_VERIFICATION_MATRIX.md">Unverified hardware tests</a>
+    </div>
+    <p class="research-disclaimer">These universities, organisations and professional groups are mentioned solely as potential audiences. No collaboration, institutional review, endorsement or government approval is claimed. Use synthetic data only and do not submit sensitive operational details.</p>
+  </section>
   <p class="note">Original concept: V. Panov (2025). Research reference and demo: October 2026. <a href="https://github.com/slavonslavon50-web/ATDA-WhitePaper">GitHub project</a> · <a href="https://github.com/slavonslavon50-web/ATDA-WhitePaper/blob/main/docs/PRIVACY_PROOF.md">Privacy limitations</a>.</p>
 </main>
 <script>
