@@ -1,5 +1,13 @@
 # Change log
 
+## Unreleased documentation update - 2026-10-30
+
+- Created [`docs/RELATED_WORK_AND_PRIOR_ART.md`](docs/RELATED_WORK_AND_PRIOR_ART.md): a source-linked prior-art comparison of known DP methods, adaptive streaming, data diodes, hazard sensing and related patent publications, with claim boundaries and gaps.
+- Added a [GitHub Pages prior-art overview](https://slavonslavon50-web.github.io/ATDA-WhitePaper/related-work.html) and linked it from README and the demo home page.
+- Cross-referenced the comparison in technical specification, mathematical privacy proof, PQC plan and provenance history.
+- Corrected the chronological claim: NIST FIPS 203/204/205 published **August 2024**, before the dated 2025 ATDA concept; IETF RFC 10024 appeared in **August 2026**.
+- No privacy gate, executable algorithm, hardware claim or deployment changed. **Official GitHub Release v1.2 not created.**
+
 ## 1.2.0 - 2026-10-27 (new reconstruction, not a claim of prior authorship date)
 
 - Restored provenance links to the original 2025 architectural white paper and preserved the 2026-01-30 GitHub commit/file.
