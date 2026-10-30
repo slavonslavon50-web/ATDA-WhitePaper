@@ -83,7 +83,9 @@ class TestGating(unittest.TestCase):
             b.ingest(passage(i), 1)
         with self.assertRaises(CapacityExceeded):
             b.ingest(passage(51), 2)
-        self.assertEqual(b.buffered_interactions, 50)
+        self.assertEqual(b.buffered_interactions, 0)  # overflow erases counts
+        with self.assertRaises(RuntimeError):
+            b.checkpoint(15)  # quarantine blocks any partial export
 
     def test_fails_closed_on_late_checkpoint(self):
         for i in range(50):
