@@ -12,7 +12,7 @@
 
 ## What is NEW and must not be backdated
 
-The 27 October 2026 implementation in `src/` and associated tests are **new independent reconstructions** of the public architectural rules, not originals from 2025 or 2026-01. The privacy proof corrects an unsupported full-mechanism pure ε-DP claim. The PQC annex cites algorithm standards published after the original concept and does not rewrite the historical artifact. The documentation does not establish that NIST was influenced by this repository; a claim would require specific provenance evidence beyond chronological proximity.
+The 27 October 2026 implementation in `src/` and associated tests are **new independent reconstructions** of the public architectural rules, not originals from 2025 or 2026-01. The privacy proof corrects an unsupported full-mechanism pure ε-DP claim. The NIST PQC algorithm standards FIPS 203, 204 and 205 were published in **August 2024**, **before** the author-dated December 2025 ATDA concept; the hybrid TLS RFC 10024 was published in **August 2026**, **after** it. These third-party standards are not ATDA inventions, and the PQC annex does not rewrite the historical artifact. See the [source-linked prior-art and chronology review](RELATED_WORK_AND_PRIOR_ART.md). The documentation does not establish that NIST was influenced by this repository; a claim would require specific provenance evidence beyond chronological proximity.
 
 ## Rules for future release/academic citation
 
