@@ -5,7 +5,7 @@
 ATDA (*Anonymous Trace-Detection Analytics*) is a **public research architecture** by V. Panov for separating high-consequence safety alerts from background chemical-trace statistics. It proposes physically independent payment and sensor trust domains, constrained data schemas, an adaptive local **k >= 50 interaction-event** release gate, and a long-term post-quantum security migration plan.
 
 [![ATDA reference tests](https://github.com/slavonslavon50-web/ATDA-WhitePaper/actions/workflows/ci.yml/badge.svg)](https://github.com/slavonslavon50-web/ATDA-WhitePaper/actions/workflows/ci.yml)
-[**Open the live interactive demo**](https://slavonslavon50-web.github.io/ATDA-WhitePaper/) · [Read the specification](specs/ATDA_Technical_Spec_v1_2.md) · [Inspect the privacy analysis](docs/PRIVACY_PROOF.md) · [Review hardware proposal](hardware/HW01_ARCHITECTURE.md) · [Contribute technical feedback](CONTRIBUTING.md)
+[**Related work & prior art**](docs/RELATED_WORK_AND_PRIOR_ART.md) · [**Prior-art website**](https://slavonslavon50-web.github.io/ATDA-WhitePaper/related-work.html) · [**Open the live interactive demo**](https://slavonslavon50-web.github.io/ATDA-WhitePaper/) · [Read the specification](specs/ATDA_Technical_Spec_v1_2.md) · [Inspect the privacy analysis](docs/PRIVACY_PROOF.md) · [Review hardware proposal](hardware/HW01_ARCHITECTURE.md) · [Contribute technical feedback](CONTRIBUTING.md)
 
 > **Maturity:** a reconstructed, unit-tested **synthetic-data research reference**, **not a deployed chemical detector**. No hardware PII isolation, sensor performance, end-to-end anonymisation, FIPS validation or industrial certification is claimed.
 
@@ -86,6 +86,12 @@ ATDA is seeking **independent technical criticism**, not endorsements or promoti
 4. Which sensor and attestation hardware can be updated and supported through 2040, including the post-quantum transition?
 
 **We welcome critical engineering feedback, reproducible test cases, privacy counterexamples, and independent review.** Please open a [GitHub issue](https://github.com/slavonslavon50-web/ATDA-WhitePaper/issues) after reading [CONTRIBUTING.md](CONTRIBUTING.md). Do not submit real payment or personal data, operational threat signatures or exploitable infrastructure deployment details.
+
+## Related work and originality boundaries
+
+ATDA combines **established engineering methods** in a project-specific research architecture. Neither the geometric mechanism for differential privacy, classical k-anonymity, adaptive streaming windows, data diodes, chemical sensing at transit gates nor NIST post-quantum algorithms is an ATDA invention. The [source-linked related-work and prior-art review](docs/RELATED_WORK_AND_PRIOR_ART.md) differentiates known methods, proposed ATDA restrictions, unverified distinctions and prior patent publications; a shorter [public overview](https://slavonslavon50-web.github.io/ATDA-WhitePaper/related-work.html) is also available.
+
+**Non-negotiable qualifier:** k=50 counts **interaction events, not 50 separate people**. An observable hard release/no-release gate cannot claim whole-protocol pure epsilon-DP. No exhaustive novelty search, patent freedom-to-operate, hardware PII stripping, physical chemical-sensor validation or industrial certification is established.
 
 ## Provenance, standards and re-use
 
