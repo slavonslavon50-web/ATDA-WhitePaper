@@ -52,6 +52,12 @@ A site-level aggregate can become identifying when site traffic is sparse or whe
 
 ## 7. Reference sources
 
+For attribution of the established geometric mechanism and differentiation between person-based k-anonymity, interaction-event release gating and streaming-adaptive privacy research, consult the [source-linked prior-art review](RELATED_WORK_AND_PRIOR_ART.md). A 50-event release rule is **not** person-level k-anonymity; threshold-dependent publication is **not** whole-protocol pure epsilon-DP.
+
+- L. Sweeney (2002), *k-Anonymity: A Model for Protecting Privacy*: https://doi.org/10.1142/S0218488502001648
+- A. Ghosh, T. Roughgarden, M. Sundararajan (2008 preprint), *Universally Utility-Maximizing Privacy Mechanisms*: https://arxiv.org/abs/0811.2841
+
+
 - Dwork and Roth, *The Algorithmic Foundations of Differential Privacy*, 2014 (standard DP definition).
 - NIST SP 800-53 Rev.5: privacy and access-control protections; not a proof of DP.
 - EDPB, *Guidelines 02/2026 on Anonymisation* (public consultation draft, 08 July 2026): https://www.edpb.europa.eu/documents/guideline/guidelines-022026-on-anonymisation_en

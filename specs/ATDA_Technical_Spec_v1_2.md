@@ -253,6 +253,10 @@ Stage M0: preserve original evidence, identify missing source artifacts and publ
 
 ## 21. External references
 
+**Research integrity and prior-art note, 30 October 2026:** Consult [RELATED_WORK_AND_PRIOR_ART.md](../docs/RELATED_WORK_AND_PRIOR_ART.md) for earlier work on geometric count-query mechanisms, k-anonymity, time-adaptive stream publication, data diodes, transit chemical sensing, PQC standards and relevant patent publications. The comparison distinguishes publication and patent priority dates, concrete ATDA requirements and missing evidence. No uniqueness, patent clearance, certification or statutory anonymisation is claimed. NIST FIPS 203/204/205 (August **2024**) predate the 2025 ATDA concept; hybrid TLS RFC 10024 dates to August 2026. A 50-**event** local gate is not person-level k-anonymity or end-to-end pure ε-DP.
+
+
+
 - Original ATDA white paper, V. Panov, 5 December 2025: https://drive.google.com/file/d/1lEXMtkPDWbe5ruQFORrCpHwERX4Ba9fw/view
 - NIST FIPS 203: https://csrc.nist.gov/pubs/fips/203/final
 - NIST FIPS 204: https://csrc.nist.gov/pubs/fips/204/final

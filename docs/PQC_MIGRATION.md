@@ -2,6 +2,8 @@
 
 **27 October 2026 | Design and procurement controls only.** Nothing in this repository performs ML-KEM/ML-DSA or claims hardware/PKI conformity.
 
+**Research attribution (30 October 2026):** NIST FIPS 203, 204 and 205 were published in **August 2024**, before the dated ATDA 2025 concept; IETF hybrid TLS RFC 10024 was published in **August 2026**. These are pre-existing external standards, not ATDA inventions, and the current repository has no implemented PQC primitives or validated module. See [Related work and prior art](RELATED_WORK_AND_PRIOR_ART.md).
+
 ## First control: crypto agility, maximum security impact at minimum complexity
 
 The first acquisition requirement is not a new cryptographic accelerator; it is upgradeable, inventoried, centrally governed cryptography across edge devices and gateways. Fix key/credential lifecycle and authenticated update pathways before enabling a new algorithm. NIST CSWP 39upd1 emphasises crypto agility across protocols, software, hardware and firmware.
