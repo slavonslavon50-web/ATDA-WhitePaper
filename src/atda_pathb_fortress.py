@@ -5,10 +5,20 @@ Hardware PII stripping and secure passage token issuance are external prerequisi
 """
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from math import log
 from random import SystemRandom
+from threading import Lock
+from types import MappingProxyType
 from typing import Protocol
+
+
+# Fixed reference wire/profile vocabulary. A different experimental profile
+# requires its own manifest, privacy proof and explicit export schema review.
+REFERENCE_WINDOW_STEPS_MIN = (15, 30, 60, 120, 240, 480, 960, 1440)
+REFERENCE_CATEGORIES = ("NARCOTICS", "BIOHAZARD", "OTHER")
+REFERENCE_RELEASE_VERSION = "ATDA-PathB-Fortress-1.2-reference"
 
 
 class UniformRng(Protocol):
@@ -23,13 +33,17 @@ class ClockFault(RuntimeError):
     """A missed checkpoint or out-of-order clock invalidated the window."""
 
 
+class BufferQuarantined(RuntimeError):
+    """A prior local fault prohibits any later aggregate release from this instance."""
+
+
 @dataclass(frozen=True)
 class Policy:
     """Static public parameters; no remote runtime override is allowed."""
 
     k_min: int = 50
-    window_steps_min: tuple[int, ...] = (15, 30, 60, 120, 240, 480, 960, 1440)
-    categories: tuple[str, ...] = ("NARCOTICS", "BIOHAZARD", "OTHER")
+    window_steps_min: tuple[int, ...] = REFERENCE_WINDOW_STEPS_MIN
+    categories: tuple[str, ...] = REFERENCE_CATEGORIES
     epoch_total_max: int = 10000
     bucket_max: int = 10000
     dedup_capacity: int = 10000
@@ -38,6 +52,23 @@ class Policy:
     max_checkpoint_lag_min: int = 2
 
     def __post_init__(self) -> None:
+        # Do not accept float/bool/object values just because they compare equal
+        # to integer parameters; temporal and RNG policies must be exact.
+        integer_fields = (self.k_min, self.epoch_total_max, self.bucket_max,
+                          self.dedup_capacity, self.q_num, self.q_den,
+                          self.max_checkpoint_lag_min)
+        if any(type(x) is not int for x in integer_fields):
+            raise ValueError("reference policy numeric parameters must be exact integers")
+        # A frozen dataclass does NOT freeze a caller-supplied list. Reject any
+        # mutable/noncanonical policy schedule or categorical schema upfront.
+        if type(self.window_steps_min) is not tuple or any(type(x) is not int for x in self.window_steps_min):
+            raise ValueError("reference checkpoint schedule must be an immutable integer tuple")
+        if type(self.categories) is not tuple or any(type(x) is not str for x in self.categories):
+            raise ValueError("reference categories must be an immutable string tuple")
+        if self.window_steps_min != REFERENCE_WINDOW_STEPS_MIN:
+            raise ValueError("fixed research reference requires the complete immutable checkpoint schedule")
+        if self.categories != REFERENCE_CATEGORIES:
+            raise ValueError("fixed research reference requires the exact immutable public categories")
         if self.k_min < 50:
             raise ValueError("normative k_min must be at least 50")
         if (not self.window_steps_min or self.window_steps_min[0] != 15
@@ -87,8 +118,51 @@ class AggregateRelease:
     zone: str
     window_start_utc_min: int
     window_minutes: int
-    noisy_counts: dict[str, int]
-    policy_version: str = "ATDA-PathB-Fortress-1.2-reference"
+    noisy_counts: Mapping[str, int]
+    policy_version: str = REFERENCE_RELEASE_VERSION
+
+    def __post_init__(self) -> None:
+        # This validates the public wire envelope, NOT that the event was really
+        # produced by a trusted sensor or that a >=50 gate was actually used.
+        if (type(self.zone) is not str or not self.zone or not self.zone.isascii()
+                or len(self.zone) > 32 or any(
+                    c not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" for c in self.zone
+                )):
+            raise ValueError("release zone is not a permitted coarse public identifier")
+        if (type(self.window_start_utc_min) is not int
+                or self.window_start_utc_min < 0
+                or self.window_start_utc_min % 15 != 0):
+            raise ValueError("release timestamp must be a 15-minute-aligned UTC minute")
+        if (type(self.window_minutes) is not int
+                or self.window_minutes not in REFERENCE_WINDOW_STEPS_MIN):
+            raise ValueError("release window is not part of the fixed public schedule")
+        if type(self.policy_version) is not str or self.policy_version != REFERENCE_RELEASE_VERSION:
+            raise ValueError("release policy version is not approved")
+        # frozen=True does not freeze a nested dictionary. Copy before wrapping,
+        # so the input dictionary cannot later change a published result.
+        if not isinstance(self.noisy_counts, Mapping):
+            raise TypeError("noisy_counts must be a mapping")
+        snapshot = dict(self.noisy_counts)
+        if set(snapshot) != set(REFERENCE_CATEGORIES):
+            raise ValueError("release counts must contain exactly the approved fixed categories")
+        if any(type(bucket) is not str or type(count) is not int or count < 0
+               for bucket, count in snapshot.items()):
+            raise ValueError("noisy_counts must contain nonnegative integer counts")
+        object.__setattr__(self, "noisy_counts", MappingProxyType(snapshot))
+
+    def to_public_payload(self) -> dict[str, object]:
+        """Explicit JSON-serializable export with detached public count values.
+
+        The returned dict is only a serialization copy; the release object stays
+        immutable. A real exporter MUST still enforce the fixed wire schema.
+        """
+        return {
+            "zone": self.zone,
+            "window_start_utc_min": self.window_start_utc_min,
+            "window_minutes": self.window_minutes,
+            "noisy_counts": dict(self.noisy_counts),
+            "policy_version": self.policy_version,
+        }
 
 
 def _geometric_failures(q_num: int, q_den: int, rng: UniformRng) -> int:
@@ -134,50 +208,79 @@ class FortressBuffer:
         self._seen: set[bytes] = set()
         self._counts: dict[str, int] = {b: 0 for b in self.policy.categories}
         self._last_clock: int | None = None
+        self._fault_reason: str | None = None
+        # Single-process serialization: ingest and checkpoint must be atomic
+        # relative to each other, including the CSPRNG generation interval.
+        self._lock = Lock()
 
     @property
     def buffered_interactions(self) -> int:
         """LOCAL diagnostic only; do not export or expose via Path B."""
-        return len(self._seen)
+        with self._lock:
+            return len(self._seen)
 
     @property
     def active_window_minutes(self) -> int | None:
-        return self.policy.window_steps_min[self._step_idx] if self._start is not None else None
+        with self._lock:
+            return self.policy.window_steps_min[self._step_idx] if self._start is not None else None
 
     def _clear(self) -> None:
+        """Drop event data after completion/expiry; preserve monotonic time floor."""
         self._seen.clear()
         self._counts = {b: 0 for b in self.policy.categories}
         self._start = None
         self._step_idx = 0
-        self._last_clock = None
 
-    def ingest(self, event: SanitizedPassage, now_utc_min: int) -> bool:
-        if type(event) is not SanitizedPassage:
-            raise TypeError("only strict sanitized passage schema is accepted")
-        if type(event.token) is not bytes or len(event.token) != 16:
-            raise ValueError("token must be exactly 128 random bits")
-        if event.bucket not in self._counts:
-            raise ValueError("unknown category")
+    def _invalidate(self, reason: str) -> None:
+        """Fail closed: zero local counts and permanently quarantine this instance.
+
+        A supervisory controller may only recover with an explicitly audited
+        restart/attested fresh state. This model cannot ensure fault persistence
+        across a process restart; deployed hardware MUST enforce it externally.
+        """
+        self._clear()
+        self._fault_reason = reason
+
+    def _ensure_healthy(self) -> None:
+        if self._fault_reason is not None:
+            raise BufferQuarantined(f"Path B quarantined: {self._fault_reason}")
+
+    def _observe_time(self, now_utc_min: int) -> None:
         if type(now_utc_min) is not int or now_utc_min < 0:
             raise ValueError("time must be nonnegative integer UTC minutes")
-        if self._start is None:
-            self._start = (now_utc_min // 15) * 15
         if self._last_clock is not None and now_utc_min < self._last_clock:
-            self._clear()
+            self._invalidate("CLOCK_ROLLBACK")
             raise ClockFault("monotonic UTC minute sequence required")
+        # Both checkpoints AND ingests advance one common time floor, including
+        # early/empty checkpoints. Do not reset it between completed windows.
         self._last_clock = now_utc_min
-        if now_utc_min >= self._start + self.policy.window_steps_min[self._step_idx]:
-            self._clear()
-            raise ClockFault("checkpoint missed: discarded buffer before ingest")
-        if event.token in self._seen:
-            return False
-        if len(self._seen) >= self.policy.dedup_capacity or len(self._seen) >= self.policy.epoch_total_max:
-            raise CapacityExceeded("no silent overflow or approximate dedup")
-        if self._counts[event.bucket] >= self.policy.bucket_max:
-            raise CapacityExceeded("bucket capacity reached")
-        self._seen.add(event.token)
-        self._counts[event.bucket] += 1
-        return True
+
+    def ingest(self, event: SanitizedPassage, now_utc_min: int) -> bool:
+        with self._lock:
+            self._ensure_healthy()
+            if type(event) is not SanitizedPassage:
+                raise TypeError("only strict sanitized passage schema is accepted")
+            if type(event.token) is not bytes or len(event.token) != 16:
+                raise ValueError("token must be exactly 128 random bits")
+            if event.bucket not in self._counts:
+                raise ValueError("unknown category")
+            self._observe_time(now_utc_min)
+            if self._start is None:
+                self._start = (now_utc_min // 15) * 15
+            if now_utc_min >= self._start + self.policy.window_steps_min[self._step_idx]:
+                self._invalidate("MISSED_CHECKPOINT")
+                raise ClockFault("checkpoint missed: discarded buffer before ingest")
+            if event.token in self._seen:
+                return False
+            if len(self._seen) >= self.policy.dedup_capacity or len(self._seen) >= self.policy.epoch_total_max:
+                self._invalidate("EPOCH_CAPACITY_EXCEEDED")
+                raise CapacityExceeded("no silent overflow or approximate dedup; epoch quarantined")
+            if self._counts[event.bucket] >= self.policy.bucket_max:
+                self._invalidate("BUCKET_CAPACITY_EXCEEDED")
+                raise CapacityExceeded("bucket capacity reached; epoch quarantined")
+            self._seen.add(event.token)
+            self._counts[event.bucket] += 1
+            return True
 
     def checkpoint(self, now_utc_min: int) -> AggregateRelease | None:
         """Call at every active deadline. Suppress until k; discard at 24h.
@@ -186,37 +289,41 @@ class FortressBuffer:
         aggregate is a *conditional/fixed-query* DP mechanism; the decision
         to publish is deterministic and leaks the k threshold boundary.
         """
-        if type(now_utc_min) is not int or now_utc_min < 0:
-            raise ValueError("time must be nonnegative integer UTC minutes")
-        if self._start is None:
-            return None
-        if self._last_clock is not None and now_utc_min < self._last_clock:
-            self._clear()
-            raise ClockFault("backward clock: discarded")
-        due = self._start + self.policy.window_steps_min[self._step_idx]
-        if now_utc_min < due:
-            return None
-        if now_utc_min - due > self.policy.max_checkpoint_lag_min:
-            self._clear()
-            raise ClockFault("late checkpoint: discarded instead of stale release")
-        if len(self._seen) >= self.policy.k_min:
-            noisy = {
-                bucket: max(
-                    0,
-                    value + two_sided_geometric(self.policy.q_num, self.policy.q_den, self._rng),
+        with self._lock:
+            self._ensure_healthy()
+            self._observe_time(now_utc_min)
+            if self._start is None:
+                return None
+            due = self._start + self.policy.window_steps_min[self._step_idx]
+            if now_utc_min < due:
+                return None
+            if now_utc_min - due > self.policy.max_checkpoint_lag_min:
+                self._invalidate("LATE_CHECKPOINT")
+                raise ClockFault("late checkpoint: discarded instead of stale release")
+            if len(self._seen) >= self.policy.k_min:
+                try:
+                    noisy = {
+                        bucket: max(
+                            0,
+                            value + two_sided_geometric(self.policy.q_num, self.policy.q_den, self._rng),
+                        )
+                        for bucket, value in self._counts.items()
+                    }
+                except Exception as exc:
+                    # An RNG failure must never make the same epoch eligible for a
+                    # repeated attempt or partially generated statistics export.
+                    self._invalidate("NOISE_GENERATION_FAILED")
+                    raise RuntimeError("noise generation failed; epoch quarantined") from exc
+                release = AggregateRelease(
+                    zone=self.zone,
+                    window_start_utc_min=self._start,
+                    window_minutes=self.policy.window_steps_min[self._step_idx],
+                    noisy_counts=noisy,
                 )
-                for bucket, value in self._counts.items()
-            }
-            release = AggregateRelease(
-                zone=self.zone,
-                window_start_utc_min=self._start,
-                window_minutes=self.policy.window_steps_min[self._step_idx],
-                noisy_counts=noisy,
-            )
-            self._clear()
-            return release
-        if self._step_idx == len(self.policy.window_steps_min) - 1:
-            self._clear()  # hard expiry; never release under-k counts
-        else:
-            self._step_idx += 1
-        return None
+                self._clear()
+                return release
+            if self._step_idx == len(self.policy.window_steps_min) - 1:
+                self._clear()  # hard expiry; never release under-k counts
+            else:
+                self._step_idx += 1
+            return None
