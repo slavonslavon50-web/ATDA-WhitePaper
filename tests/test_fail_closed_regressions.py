@@ -116,7 +116,7 @@ class TestImmutableRelease(unittest.TestCase):
             AggregateRelease('ZONE', 0, 15, {'NARCOTICS': [1]})
 
     def test_source_mapping_cannot_mutate_release_and_wire_payload_is_detached(self):
-        source = {'NARCOTICS': 3, 'BIOHAZARD': 0}
+        source = {'NARCOTICS': 3, 'BIOHAZARD': 0, 'OTHER': 0}
         release = AggregateRelease('ZONE', 0, 15, source)
         source['NARCOTICS'] = 999
         self.assertEqual(release.noisy_counts['NARCOTICS'], 3)
